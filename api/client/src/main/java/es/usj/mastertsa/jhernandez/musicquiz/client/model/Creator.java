@@ -13,6 +13,7 @@
 
 package es.usj.mastertsa.jhernandez.musicquiz.client.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -34,7 +35,7 @@ import java.util.List;
  * Creator
  */
 
-public class Creator {
+public class Creator implements Serializable {
   public static final String JSON_PROPERTY_COMICS = "comics";
   private ComicList comics;
 

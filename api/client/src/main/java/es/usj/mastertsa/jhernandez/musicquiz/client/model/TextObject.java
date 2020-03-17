@@ -13,6 +13,7 @@
 
 package es.usj.mastertsa.jhernandez.musicquiz.client.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,7 +27,7 @@ import io.swagger.annotations.ApiModelProperty;
  * TextObject
  */
 
-public class TextObject {
+public class TextObject implements Serializable {
   public static final String JSON_PROPERTY_LANGUAGE = "language";
   private String language;
 

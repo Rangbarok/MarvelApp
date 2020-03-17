@@ -13,6 +13,7 @@
 
 package es.usj.mastertsa.jhernandez.musicquiz.client.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -36,7 +37,7 @@ import java.util.List;
  * Series
  */
 
-public class Series {
+public class Series implements Serializable {
   public static final String JSON_PROPERTY_CHARACTERS = "characters";
   private CharacterList characters;
 

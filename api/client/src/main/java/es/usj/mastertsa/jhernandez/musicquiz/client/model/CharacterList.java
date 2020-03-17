@@ -13,6 +13,7 @@
 
 package es.usj.mastertsa.jhernandez.musicquiz.client.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -29,7 +30,7 @@ import java.util.List;
  * CharacterList
  */
 
-public class CharacterList {
+public class CharacterList implements Serializable {
   public static final String JSON_PROPERTY_AVAILABLE = "available";
   private Integer available;
 

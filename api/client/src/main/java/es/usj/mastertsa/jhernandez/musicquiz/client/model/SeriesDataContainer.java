@@ -13,6 +13,7 @@
 
 package es.usj.mastertsa.jhernandez.musicquiz.client.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -29,7 +30,7 @@ import java.util.List;
  * SeriesDataContainer
  */
 
-public class SeriesDataContainer {
+public class SeriesDataContainer implements Serializable {
   public static final String JSON_PROPERTY_COUNT = "count";
   private Integer count;
 

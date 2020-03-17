@@ -13,6 +13,7 @@
 
 package es.usj.mastertsa.jhernandez.musicquiz.client.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,7 +28,7 @@ import io.swagger.annotations.ApiModelProperty;
  * SeriesDataWrapper
  */
 
-public class SeriesDataWrapper {
+public class SeriesDataWrapper implements Serializable {
   public static final String JSON_PROPERTY_ATTRIBUTION_H_T_M_L = "attributionHTML";
   private String attributionHTML;
 

@@ -1,16 +1,12 @@
 package es.usj.mastertsa.jhernandez.musicquiz
 
 import android.graphics.BitmapFactory
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import es.usj.mastertsa.jhernandez.musicquiz.client.ApiClient
-import es.usj.mastertsa.jhernandez.musicquiz.client.api.DefaultApi
-import es.usj.mastertsa.jhernandez.musicquiz.client.auth.MarvelAuth
 import es.usj.mastertsa.jhernandez.musicquiz.client.model.Comic
 import kotlinx.android.synthetic.main.template.view.*
 import org.jetbrains.anko.doAsync
@@ -58,7 +54,7 @@ class ComicsAdapter(comics: ArrayList<Comic>, var clickListener: ClickListener):
 
         init {
             photo = view.ivPhoto
-            name = view.tvName
+            name = view.tvCreators
             this.clickListener = clickListener
             view.setOnClickListener(this)
         }

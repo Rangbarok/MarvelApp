@@ -43,15 +43,13 @@ public class MarvelAuth implements RequestInterceptor {
         this.limit = limit;
     }
 
-
     public Integer getOffset() {
         return offset;
     }
 
-    public void setHash(Integer offset) {
+    public void setOffset(Integer offset) {
         this.offset = offset;
     }
-
 
     public MarvelAuth(String timestamp, String apiKey, String hash) {
         this.timestamp = timestamp;
