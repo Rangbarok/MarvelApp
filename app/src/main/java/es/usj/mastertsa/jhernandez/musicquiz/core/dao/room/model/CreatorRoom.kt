@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey
 import java.util.*
 
 @Entity(tableName = "creators")
-data class CreatorRoom(@PrimaryKey var id: Long,
-                       val fullName: String) {
+data class CreatorRoom(@PrimaryKey var id: String,
+                       val name: String) {
 
     override fun toString(): String {
-        return "$id.- $fullName"
+        return "$id.- $name"
     }
 }

@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 data class ComicRoom(@PrimaryKey var id: Long,
                      val title: String,
                      val pageCount: Int,
-                     val characters: Collection<CharacterRoom>,
-                     val creators: Collection<CreatorRoom>) {
+                     val characters: ArrayList<CharacterRoom>,
+                     val creators: ArrayList<CreatorRoom>) {
 
     override fun toString(): String {
         return "$id.- $title"

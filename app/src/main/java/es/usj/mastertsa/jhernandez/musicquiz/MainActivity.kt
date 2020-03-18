@@ -17,17 +17,6 @@ import org.jetbrains.anko.uiThread
 import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
-    /*private val publicToken = "867ef9fe67a6ded32323fa5824f03945"
-    private var temporalTimeStamp = "1581706782"
-    private val temporalHash = "e49d2084fd36c2d43967ef056eee2ab8"
-
-    var marvelRequestInterceptor = MarvelAuth(temporalTimeStamp, publicToken, temporalHash)
-
-    private val apiClient get () = ApiClient().apply {
-        addAuthorization("MarvelLibApp", marvelRequestInterceptor)
-    }
-
-    private var marvelServiceApi = apiClient.buildClient(DefaultApi::class.java)*/
 
     companion object {
         var ctx: Context? = null
@@ -36,11 +25,23 @@ class MainActivity : AppCompatActivity() {
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: ComicsAdapter? = null
 
+    override fun onPause() {
+        MarvelData.cleanMarvelServiceAPI()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        // TODO: recover all comics -> first in cache (Room), then API
+        MarvelData.buildMarvelServiceAPI()
+        super.onResume()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         ctx = this
+        MarvelData.buildMarvelServiceAPI()
         layoutManager = LinearLayoutManager(this)
         rvComicList?.addItemDecoration(DividerItemDecoration(this, OrientationHelper.VERTICAL))
 
