@@ -40,7 +40,7 @@ object MarvelData {
         }
     }
 
-    var comics: ArrayList<Comic> by Delegates.observable(arrayListOf(), observer)
+    var comics: ArrayList<Comic> by Delegates.observable(arrayListOf<Comic>(), observer)
 
     fun buildMarvelServiceAPI() {
         signAPIPresenter.sign("867ef9fe67a6ded32323fa5824f03945", "1581706782", "e49d2084fd36c2d43967ef056eee2ab8")
@@ -69,11 +69,12 @@ object MarvelData {
             marvelRequestInterceptor!!.offset =
                 currentOffset
             currentOffset += currentLimit
-            // TODO: store comics in cache before end function
             doAsyncResult {
+                // TODO: HOW TO DETECT ARRAY CHANGES IN addAll
                 comics = marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>
-                comics.clear()
-                comics.addAll(marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>)
+                //comics.clear()
+                //comics.addAll(marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>)
+                // TODO: store comics in cache before end function
                 /*comics.forEach {
                     storeComicsInCache(it)
                 }*/

@@ -7,6 +7,7 @@ import android.util.Log
 import es.usj.mastertsa.jhernandez.musicquiz.client.model.Comic
 import kotlinx.android.synthetic.main.activity_comic_detail.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.net.URL
 
 class ComicDetail : AppCompatActivity() {
@@ -22,10 +23,10 @@ class ComicDetail : AppCompatActivity() {
         doAsync {
             val url: URL = URL("${comic?.thumbnail?.path}/portrait_fantastic.${comic?.thumbnail?.extension}")
             val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-            ivComicCover.setImageBitmap(bmp)
+            uiThread {
+                ivComicCover.setImageBitmap(bmp)
+            }
         }
-
-        Log.e("MARVEL APP", comic?.creators?.items?.first()?.resourceURI)
 
         tvComicTitle.text = comic?.title
         tvCreators.text = "${comic?.creators?.items?.size}"

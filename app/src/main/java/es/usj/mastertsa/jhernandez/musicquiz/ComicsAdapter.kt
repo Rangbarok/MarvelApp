@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import es.usj.mastertsa.jhernandez.musicquiz.client.model.Comic
 import kotlinx.android.synthetic.main.template.view.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.net.URL
 
 
@@ -20,6 +21,12 @@ class ComicsAdapter(comics: ArrayList<Comic>, private var clickListener: ClickLi
 
     init {
         this.comics = comics
+    }
+
+    fun updateData(comics: ArrayList<Comic>) {
+        this.comics = arrayListOf()
+        this.comics?.clear()
+        this.comics?.addAll(comics)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComicsAdapter.ViewHolder {
@@ -40,7 +47,9 @@ class ComicsAdapter(comics: ArrayList<Comic>, private var clickListener: ClickLi
             doAsync {
                 val url: URL = URL("${comic.thumbnail?.path}/portrait_medium.${comic.thumbnail?.extension}")
                 val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                holder.photo?.setImageBitmap(bmp)
+                uiThread {
+                    holder.photo?.setImageBitmap(bmp)
+                }
             }
         }
     }

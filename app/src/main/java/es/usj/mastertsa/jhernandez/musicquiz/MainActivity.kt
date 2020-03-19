@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
         adapter = ComicsAdapter(comicsInternal, object: ClickListener {
             override fun onClick(view: View, position: Int) {
-                val detailedComic = MarvelData.comics[position]
+                val detailedComic = comicsInternal[position]
                 val intent = Intent(this@MainActivity, ComicDetail::class.java)
                 intent.putExtra("MARVEL_COMIC", detailedComic as Serializable)
                 startActivity(intent)
@@ -67,12 +67,12 @@ class MainActivity : AppCompatActivity() {
             override fun refreshListRequest() {
                 Log.e("MARVEL_APP", "Comics data change to")
                 runOnUiThread {
-                    comicsInternal = MarvelData.comics
-                    adapter?.notifyDataSetChanged()
+                    updateView()
                 }
             }
         })
-        rvComicList.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+        // TODO: cuando se llegue al final de la listview pedir nuevos comics
+        /*rvComicList.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -89,13 +89,20 @@ class MainActivity : AppCompatActivity() {
                     MarvelData.getNextComicsFromAPI()
                 }
             }*/
-        })
+        })*/
 
         if (MarvelData.comics.size == 0) {
             Log.e("MARVEL_APP", "Getting new comics from singleton")
             MarvelData.getNextComicsFromAPI()
         }
 
+    }
+
+    fun updateView() {
+        Log.e("MARVEL_APP", "Updating view")
+        comicsInternal.addAll(MarvelData.comics)
+        adapter!!.updateData(comicsInternal)
+        adapter!!.notifyDataSetChanged()
     }
 
 }
