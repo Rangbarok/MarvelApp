@@ -2,6 +2,7 @@ package es.usj.mastertsa.jhernandez.musicquiz.singleton
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import es.usj.mastertsa.jhernandez.musicquiz.client.ApiClient
 import es.usj.mastertsa.jhernandez.musicquiz.client.api.DefaultApi
 import es.usj.mastertsa.jhernandez.musicquiz.client.auth.MarvelAuth
@@ -70,8 +71,13 @@ object MarvelData {
                 currentOffset
             currentOffset += currentLimit
             doAsyncResult {
+                val auxComics = marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>
+                Log.e("MARVEL_APP", "OLD SIZE :: ${comics.size}")
                 // TODO: HOW TO DETECT ARRAY CHANGES IN addAll
-                comics = marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>
+                comics.addAll(auxComics)
+                val totalComic = comics
+                comics = totalComic
+                Log.e("MARVEL_APP", "NEW SIZE :: ${comics.size}")
                 //comics.clear()
                 //comics.addAll(marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>)
                 // TODO: store comics in cache before end function

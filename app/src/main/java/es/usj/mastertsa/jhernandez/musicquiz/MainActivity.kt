@@ -3,6 +3,8 @@ package es.usj.mastertsa.jhernandez.musicquiz
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.View.MeasureSpec.getSize
@@ -95,6 +97,15 @@ class MainActivity : AppCompatActivity() {
             Log.e("MARVEL_APP", "Getting new comics from singleton")
             MarvelData.getNextComicsFromAPI()
         }
+
+        val mainHandler = Handler(Looper.getMainLooper())
+
+        mainHandler.post(object : Runnable {
+            override fun run() {
+                MarvelData.getNextComicsFromAPI()
+                mainHandler.postDelayed(this, 8000)
+            }
+        })
 
     }
 
