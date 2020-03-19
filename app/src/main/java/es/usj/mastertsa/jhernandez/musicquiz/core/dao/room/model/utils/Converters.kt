@@ -3,7 +3,7 @@ package es.usj.mastertsa.jhernandez.musicquiz.core.dao.room.model.utils
 import androidx.room.TypeConverter
 import es.usj.mastertsa.jhernandez.musicquiz.MainActivity
 import es.usj.mastertsa.jhernandez.musicquiz.core.dao.room.model.ComicRoom
-import es.usj.mastertsa.jhernandez.musicquiz.core.dao.room.utils.ComicRoomDatabase
+import es.usj.mastertsa.jhernandez.musicquiz.core.dao.room.utils.MarvelRoomDatabase
 import java.util.*
 
 class Converters {
@@ -19,12 +19,12 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromId(value: Long?): ComicRoom? {
-        return ComicRoomDatabase.getDatabase(MainActivity.ctx!!)!!.placeDao()!!.findById(value!!)
+    fun comicFromId(value: Long?): ComicRoom? {
+        return MarvelRoomDatabase.getDatabase(MainActivity.ctx!!)!!.comicDao()!!.findById(value!!)
     }
 
     @TypeConverter
-    fun placeTo(comic: ComicRoom?): Long? {
+    fun comicToId(comic: ComicRoom?): Long? {
         return comic?.id
     }
 }

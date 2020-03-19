@@ -9,22 +9,21 @@ import es.usj.mastertsa.jhernandez.musicquiz.client.model.Comic
 import es.usj.mastertsa.jhernandez.musicquiz.client.model.Creator
 import es.usj.mastertsa.jhernandez.musicquiz.core.DaoFactory
 import es.usj.mastertsa.jhernandez.musicquiz.core.IDao
-import es.usj.mastertsa.jhernandez.musicquiz.core.dao.room.model.CharacterRoom
 import es.usj.mastertsa.jhernandez.musicquiz.core.dao.room.model.ComicRoom
-import es.usj.mastertsa.jhernandez.musicquiz.core.dao.room.model.CreatorRoom
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.doAsyncResult
 import java.net.URL
+import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
+
+interface InterfaceRefreshList {
+    fun refreshListRequest()
+}
 
 object MarvelData {
     var daoComics : IDao<ComicRoom> = DaoFactory.getFactory().getComicDao()
-    var daoCreators : IDao<CreatorRoom> = DaoFactory.getFactory().getCreatorDao()
-    var daoCharacters : IDao<CharacterRoom> = DaoFactory.getFactory().getCharacterDao()
 
     private val signAPIPresenter = SignPresenter()
-
-    /*private const val publicToken = "867ef9fe67a6ded32323fa5824f03945"
-    private const val temporalTimeStamp = "1581706782"
-    private const val temporalHash = "e49d2084fd36c2d43967ef056eee2ab8"*/
 
     private var marvelRequestInterceptor: MarvelAuth? = null
     private var apiClient: ApiClient? = null
@@ -33,10 +32,18 @@ object MarvelData {
     private var currentOffset = 0
     private var currentLimit = 20
 
-    var comics: ArrayList<Comic>? = null
+    var refreshListListeners = ArrayList<InterfaceRefreshList>()
 
-    fun buildMarvelServiceAPI(publicToken: String = "867ef9fe67a6ded32323fa5824f03945", timestamp: String = "1581706782", hash: String = "e49d2084fd36c2d43967ef056eee2ab8") {
-        signAPIPresenter.sign(publicToken, timestamp, hash)
+    private val observer = { _: KProperty<*>, _: Any, _: Any ->
+        refreshListListeners.forEach {
+            it.refreshListRequest()
+        }
+    }
+
+    var comics: ArrayList<Comic> by Delegates.observable(arrayListOf(), observer)
+
+    fun buildMarvelServiceAPI() {
+        signAPIPresenter.sign("867ef9fe67a6ded32323fa5824f03945", "1581706782", "e49d2084fd36c2d43967ef056eee2ab8")
         if (signAPIPresenter.isSigned) {
             marvelRequestInterceptor = MarvelAuth(signAPIPresenter.timestamp, signAPIPresenter.publicToken, signAPIPresenter.hash)
 
@@ -62,12 +69,14 @@ object MarvelData {
             marvelRequestInterceptor!!.offset =
                 currentOffset
             currentOffset += currentLimit
-            comics = marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>
             // TODO: store comics in cache before end function
-            doAsync {
-                comics!!.forEach {
+            doAsyncResult {
+                comics = marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>
+                comics.clear()
+                comics.addAll(marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>)
+                /*comics.forEach {
                     storeComicsInCache(it)
-                }
+                }*/
             }
         }
     }
@@ -105,24 +114,10 @@ object MarvelData {
         }
     }
 
-    fun storeComicsInCache(comic: Comic) {
-        val creators: ArrayList<CreatorRoom> = arrayListOf()
-        val characters: ArrayList<CharacterRoom> = arrayListOf()
-
-        for (creatorAPI in comic.creators!!.items!!.toList()) {
-            val creatorRoom = CreatorRoom(creatorAPI.resourceURI!!, creatorAPI.name!!)
-            creators.add(creatorRoom)
-            daoCreators.insert(creatorRoom)
-        }
-        for (characterAPI in comic.characters!!.items!!.toList()) {
-            val characterRoom = CharacterRoom(characterAPI.resourceURI!!, characterAPI.name!!)
-            characters.add(characterRoom)
-            daoCharacters.insert(characterRoom)
-        }
-
-        val comicRoom = ComicRoom(comic.id!!.toLong(), comic.title!!, comic.pageCount!!, characters!!, creators!!)
+    /*fun storeComicsInCache(comic: Comic) {
+        val comicRoom = ComicRoom(comic.id!!.toLong(), comic.title!!, comic.pageCount!!, comic.characters!!.items!!.size, comic.creators!!.items!!.size)
         daoComics.insert(comicRoom)
-    }
+    }*/
 
     fun clearCache() {
 

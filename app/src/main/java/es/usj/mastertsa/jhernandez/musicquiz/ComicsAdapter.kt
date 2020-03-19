@@ -13,7 +13,7 @@ import org.jetbrains.anko.doAsync
 import java.net.URL
 
 
-class ComicsAdapter(comics: ArrayList<Comic>, var clickListener: ClickListener): RecyclerView.Adapter<ComicsAdapter.ViewHolder>() {
+class ComicsAdapter(comics: ArrayList<Comic>, private var clickListener: ClickListener): RecyclerView.Adapter<ComicsAdapter.ViewHolder>() {
 
     private var comics: ArrayList<Comic>? = null
     private var viewHolder: ViewHolder? = null
@@ -42,8 +42,6 @@ class ComicsAdapter(comics: ArrayList<Comic>, var clickListener: ClickListener):
                 val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
                 holder.photo?.setImageBitmap(bmp)
             }
-        } else {
-            // TODO: add default image for comics without images
         }
     }
 

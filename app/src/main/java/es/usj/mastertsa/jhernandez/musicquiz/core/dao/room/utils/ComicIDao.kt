@@ -19,7 +19,7 @@ interface ComicIDao {
     fun findById(id: Long): ComicRoom
 
     @Query("SELECT * from comics ORDER BY id ASC")
-    fun getAllEvents(): List<ComicRoom>
+    fun getAllComics(): List<ComicRoom>
 
     @Update
     fun update(event: ComicRoom?)
