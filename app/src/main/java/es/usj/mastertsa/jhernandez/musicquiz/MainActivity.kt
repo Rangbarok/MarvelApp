@@ -19,6 +19,7 @@ import es.usj.mastertsa.jhernandez.musicquiz.client.model.Comic
 import es.usj.mastertsa.jhernandez.musicquiz.singleton.InterfaceRefreshList
 import es.usj.mastertsa.jhernandez.musicquiz.singleton.MarvelData
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.doAsync
 
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.uiThread
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private var comicsInternal: ArrayList<Comic> = arrayListOf()
 
     override fun onPause() {
-        MarvelData.cleanMarvelServiceAPI()
+        //MarvelData.cleanMarvelServiceAPI()
         super.onPause()
     }
 
@@ -56,8 +57,16 @@ class MainActivity : AppCompatActivity() {
         adapter = ComicsAdapter(comicsInternal, object: ClickListener {
             override fun onClick(view: View, position: Int) {
                 val detailedComic = comicsInternal[position]
-                val intent = Intent(this@MainActivity, ComicDetail::class.java)
-                intent.putExtra("MARVEL_COMIC", detailedComic as Serializable)
+                val intent = Intent(this@MainActivity, ComicDetail::class.java).apply {
+                    //TODO: buscar otra manera de hacer esto para poder enviar solo el Comic o ComicRoom y que ComicDetail se encarge de representarlo
+                    putExtra("comic_id", detailedComic.id)
+                    putExtra("comic_title", detailedComic.title)
+                    putExtra("comic_description", detailedComic.description)
+                    putExtra("comic_creators_num", detailedComic.creators?.items?.size)
+                    putExtra("comic_characters_num", detailedComic.characters?.items?.size)
+                    putExtra("comic_thumbnail_extension", detailedComic.thumbnail?.extension)
+                    putExtra("comic_thumbnail_path", detailedComic.thumbnail?.path)
+                }
                 startActivity(intent)
             }
         })
@@ -93,25 +102,19 @@ class MainActivity : AppCompatActivity() {
             }*/
         })*/
 
-        if (MarvelData.comics.size == 0) {
-            Log.e("MARVEL_APP", "Getting new comics from singleton")
-            MarvelData.getNextComicsFromAPI()
-        }
-
-        val mainHandler = Handler(Looper.getMainLooper())
-
-        mainHandler.post(object : Runnable {
-            override fun run() {
+        MarvelData.getComicsFromCache { comicsRoom ->
+            Log.e("MARVEL_APP", "Comics in cache Room :: $comicsRoom")
+            if (MarvelData.comicsAPI.size == 0) {
+                Log.e("MARVEL_APP", "Getting new comics from singleton")
                 MarvelData.getNextComicsFromAPI()
-                mainHandler.postDelayed(this, 8000)
             }
-        })
+        }
 
     }
 
     fun updateView() {
         Log.e("MARVEL_APP", "Updating view")
-        comicsInternal.addAll(MarvelData.comics)
+        comicsInternal.addAll(MarvelData.comicsAPI)
         adapter!!.updateData(comicsInternal)
         adapter!!.notifyDataSetChanged()
     }
