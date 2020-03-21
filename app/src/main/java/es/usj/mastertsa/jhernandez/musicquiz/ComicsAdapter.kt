@@ -14,18 +14,18 @@ import org.jetbrains.anko.uiThread
 import java.net.URL
 
 
-class ComicsAdapter(comics: ArrayList<Comic>, private var clickListener: ClickListener): RecyclerView.Adapter<ComicsAdapter.ViewHolder>() {
+class ComicsAdapter(comics: ArrayList<GeneralComic>, private var clickListener: ClickListener): RecyclerView.Adapter<ComicsAdapter.ViewHolder>() {
 
-    private var comics: ArrayList<Comic>? = null
+    private var comics: ArrayList<GeneralComic>? = null
     private var viewHolder: ViewHolder? = null
 
     init {
         this.comics = comics
     }
 
-    fun updateData(comics: ArrayList<Comic>) {
-        this.comics = arrayListOf()
-        this.comics?.clear()
+    fun updateData(comics: ArrayList<GeneralComic>) {
+        //this.comics = arrayListOf()
+        //this.comics?.clear()
         this.comics?.addAll(comics)
     }
 
@@ -43,13 +43,11 @@ class ComicsAdapter(comics: ArrayList<Comic>, private var clickListener: ClickLi
     override fun onBindViewHolder(holder: ComicsAdapter.ViewHolder, position: Int) {
         val comic = this.comics?.get(position)
         holder.name?.text = comic?.title
-        if (!comic?.images?.isNullOrEmpty()!!) {
-            doAsync {
-                val url: URL = URL("${comic.thumbnail?.path}/portrait_medium.${comic.thumbnail?.extension}")
-                val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                uiThread {
-                    holder.photo?.setImageBitmap(bmp)
-                }
+        doAsync {
+            val url: URL = URL("${comic?.thumbnailPath}/portrait_medium.${comic?.thumbnailExtension}")
+            val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+            uiThread {
+                holder.photo?.setImageBitmap(bmp)
             }
         }
     }

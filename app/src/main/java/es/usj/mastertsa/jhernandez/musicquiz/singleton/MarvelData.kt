@@ -49,7 +49,6 @@ object MarvelData {
 
     fun buildMarvelServiceAPI() {
         signAPIPresenter.sign("867ef9fe67a6ded32323fa5824f03945", "1581706782", "e49d2084fd36c2d43967ef056eee2ab8")
-        Log.e("MARVEL_APP", "Status sign presenter :: ${signAPIPresenter.isSigned}")
         if (signAPIPresenter.isSigned) {
             marvelRequestInterceptor = MarvelAuth(signAPIPresenter.timestamp, signAPIPresenter.publicToken, signAPIPresenter.hash)
 
@@ -60,13 +59,11 @@ object MarvelData {
             marvelServiceApi = apiClient!!.buildClient(DefaultApi::class.java)
 
             getComicsFromCache { comics ->
-                Log.e("MARVEL_APP", "After getComicsFromCache() in buildMarvelServiceAPI")
                 comicsRoom = comics
 
                 if (comicsRoom != null) {
                     numberOfComicsInRoom = comicsRoom?.size!!
                     currentOffset += numberOfComicsInRoom
-                    Log.e("MARVEL_APP", "Number of comics in Room :: $numberOfComicsInRoom")
                 }
             }
         }
@@ -79,57 +76,51 @@ object MarvelData {
         signAPIPresenter.unsign()
     }
 
+    private fun getComicsFromCache(callback: (ArrayList<ComicRoom>) -> Unit) {
+        doAsyncResult {
+            val auxComics = daoComics.list()
+            callback(auxComics as ArrayList<ComicRoom>)
+        }
+    }
+
+    private fun formatComics(comics: ArrayList<Comic>): ArrayList<Comic> {
+        val newComics = arrayListOf<Comic>()
+        comics.forEach {
+            if (it.id != null && it.characters != null && it.creators != null && it.title != null && it.description != null && it.thumbnail != null && it.thumbnail!!.path != null && it.thumbnail!!.extension != null) {
+                newComics.add(it)
+            }
+        }
+        return newComics
+    }
+
     fun getNextComicsFromAPI() {
         if (signAPIPresenter.isSigned) {
-            Log.e("MARVEL_APP", "Inside getNextComicsFromAPI()")
-            //TODO: No llamarse a getComicsFromCache todas las veces
-            getComicsFromCache { comics ->
-                Log.e("MARVEL_APP", "After getComicsFromCache()")
-                comicsRoom = comics
+            marvelRequestInterceptor!!.limit =
+                currentLimit
+            marvelRequestInterceptor!!.offset =
+                currentOffset
+            currentOffset += currentLimit
 
-                // TODO: HACER ESTO SOLO LA PRIMERA VEZ
-                if(comicsRoom != null) {
-                    numberOfComicsInRoom = comicsRoom?.size!!
-                    currentOffset += numberOfComicsInRoom
-                    Log.e("MARVEL_APP", "Number of comics in Room :: $numberOfComicsInRoom")
-                }
-
-                marvelRequestInterceptor!!.limit =
-                    currentLimit
-                marvelRequestInterceptor!!.offset =
-                    currentOffset
-                currentOffset += currentLimit
-
-                //doAsyncResult {
-                    val auxComics = comicsAPI
-                    auxComics.addAll(marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>)
-                    comicsAPI = auxComics
-                    comicsAPI.forEach {
-                        if(!comicIsInCache(it.id!!.toLong()) && it.id != null && it.description != null && it.title !== null && it.characters != null && it.creators != null && it.thumbnail != null) {
-                            storeComicsInCache(it)
-                        }
+            doAsyncResult {
+                val auxComics = comicsAPI
+                val comicsToAdd = formatComics(marvelServiceApi!!.getComicsCollection(mapOf()).data?.results as ArrayList<Comic>)
+                auxComics.addAll(comicsToAdd)
+                comicsAPI = auxComics
+                comicsAPI.forEach {
+                    if(!comicIsInCache(it.id!!.toLong()) && it.id != null && it.description != null && it.title !== null && it.characters != null && it.creators != null && it.thumbnail != null) {
+                        storeComicsInCache(it)
                     }
-                //}
+                }
             }
         }
     }
 
     fun getAPICoverImage(comicThumbnailPath: String, comicThumbnailExtension: String): Bitmap? {
-        Log.e("MARVEL_APP", "Trying to get image :: ${signAPIPresenter.isSigned}")
         return if (signAPIPresenter.isSigned) {
             val url: URL = URL("$comicThumbnailPath/portrait_fantastic.$comicThumbnailExtension")
             BitmapFactory.decodeStream(url.openConnection().getInputStream())
         } else {
             null
-        }
-    }
-
-    fun getComicsFromCache(callback: (ArrayList<ComicRoom>) -> Unit) {
-        doAsyncResult {
-            Log.e("MARVEL_APP", "Inside getComicsFromCache()")
-            val auxComics = daoComics.list()
-            Log.e("MARVEL_APP", "Comics $auxComics")
-            callback(auxComics as ArrayList<ComicRoom>)
         }
     }
 

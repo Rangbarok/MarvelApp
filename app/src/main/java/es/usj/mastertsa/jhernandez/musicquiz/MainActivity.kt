@@ -10,11 +10,13 @@ import android.view.View
 import android.view.View.MeasureSpec.getSize
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.OrientationHelper
 import androidx.recyclerview.widget.RecyclerView
+import es.usj.mastertsa.jhernandez.musicquiz.client.model.Character
 import es.usj.mastertsa.jhernandez.musicquiz.client.model.Comic
 import es.usj.mastertsa.jhernandez.musicquiz.singleton.InterfaceRefreshList
 import es.usj.mastertsa.jhernandez.musicquiz.singleton.MarvelData
@@ -34,17 +36,12 @@ class MainActivity : AppCompatActivity() {
 
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: ComicsAdapter? = null
-    private var comicsInternal: ArrayList<Comic> = arrayListOf()
-
-    override fun onPause() {
-        //MarvelData.cleanMarvelServiceAPI()
-        super.onPause()
-    }
+    private var loading: Boolean = false
+    private var comicsInternal: ArrayList<GeneralComic> = arrayListOf()
 
     override fun onResume() {
-        // TODO: recover all comics -> first in cache (Room), then API
-        MarvelData.buildMarvelServiceAPI()
         super.onResume()
+        MarvelData.buildMarvelServiceAPI()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,19 +50,13 @@ class MainActivity : AppCompatActivity() {
 
         ctx = this
         MarvelData.buildMarvelServiceAPI()
+        comicsInternal.addAll(convertRoomComicToGeneral())
 
         adapter = ComicsAdapter(comicsInternal, object: ClickListener {
             override fun onClick(view: View, position: Int) {
                 val detailedComic = comicsInternal[position]
                 val intent = Intent(this@MainActivity, ComicDetail::class.java).apply {
-                    //TODO: buscar otra manera de hacer esto para poder enviar solo el Comic o ComicRoom y que ComicDetail se encarge de representarlo
-                    putExtra("comic_id", detailedComic.id)
-                    putExtra("comic_title", detailedComic.title)
-                    putExtra("comic_description", detailedComic.description)
-                    putExtra("comic_creators_num", detailedComic.creators?.items?.size)
-                    putExtra("comic_characters_num", detailedComic.characters?.items?.size)
-                    putExtra("comic_thumbnail_extension", detailedComic.thumbnail?.extension)
-                    putExtra("comic_thumbnail_path", detailedComic.thumbnail?.path)
+                    putExtra("comic", detailedComic)
                 }
                 startActivity(intent)
             }
@@ -76,47 +67,55 @@ class MainActivity : AppCompatActivity() {
         rvComicList?.adapter = adapter
         MarvelData.refreshListListeners.add(object: InterfaceRefreshList {
             override fun refreshListRequest() {
-                Log.e("MARVEL_APP", "Comics data change to")
                 runOnUiThread {
                     updateView()
                 }
             }
         })
-        // TODO: cuando se llegue al final de la listview pedir nuevos comics
-        /*rvComicList.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+
+        rvComicList.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                if (rvComicList.canScrollVertically(1)) {
-                    Log.e("MARVEL_APP", "BOTTOM TOUCHED")
+                if (!loading && !rvComicList!!.canScrollVertically(1)) {
+                    loading = true
+                    Toast.makeText(applicationContext, "Getting new content", Toast.LENGTH_SHORT).show()
                     MarvelData.getNextComicsFromAPI()
+                    loading = false
                 }
             }
-            /*override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
+        })
 
-                if (rvComicList.canScrollVertically(1)) {
-                    Log.e("MARVEL_APP", "BOTTOM TOUCHED")
-                    MarvelData.getNextComicsFromAPI()
-                }
-            }*/
-        })*/
-
-        MarvelData.getComicsFromCache { comicsRoom ->
-            Log.e("MARVEL_APP", "Comics in cache Room :: $comicsRoom")
-            if (MarvelData.comicsAPI.size == 0) {
-                Log.e("MARVEL_APP", "Getting new comics from singleton")
-                MarvelData.getNextComicsFromAPI()
-            }
+        comicsInternal.addAll(convertRoomComicToGeneral())
+        if (comicsInternal.size < 20) {
+            MarvelData.getNextComicsFromAPI()
         }
-
     }
 
-    fun updateView() {
-        Log.e("MARVEL_APP", "Updating view")
-        comicsInternal.addAll(MarvelData.comicsAPI)
-        adapter!!.updateData(comicsInternal)
+    private fun updateView() {
+        val comicsToAdd = convertComicAPIToGeneral()
+        comicsToAdd.removeAll(comicsInternal)
+        comicsInternal.addAll(comicsToAdd)
+        adapter!!.updateData(comicsToAdd)
         adapter!!.notifyDataSetChanged()
+
+        Toast.makeText(applicationContext, "New content received", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun convertRoomComicToGeneral(): ArrayList<GeneralComic> {
+        val generalComics = arrayListOf<GeneralComic>()
+        MarvelData.comicsRoom?.forEach {
+            generalComics.add(GeneralComic(it))
+        }
+        return generalComics
+    }
+
+    private fun convertComicAPIToGeneral(): ArrayList<GeneralComic> {
+        val generalComics = arrayListOf<GeneralComic>()
+        MarvelData.comicsAPI.forEach {
+            generalComics.add(GeneralComic(it))
+        }
+        return generalComics
     }
 
 }
