@@ -1,4 +1,4 @@
-package es.usj.mastertsa.pluengo.marvelcollection
+package es.usj.mastertsa.pluengo.marvelcollection.controller.comicList
 
 import android.content.Context
 import android.content.Intent
@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.OrientationHelper
 import androidx.recyclerview.widget.RecyclerView
 import es.usj.mastertsa.pluengo.marvelcollection.R
+import es.usj.mastertsa.pluengo.marvelcollection.controller.comicDetail.ComicDetail
+import es.usj.mastertsa.pluengo.marvelcollection.model.GeneralComic
 import es.usj.mastertsa.pluengo.marvelcollection.singleton.InterfaceRefreshList
 import es.usj.mastertsa.pluengo.marvelcollection.singleton.MarvelData
 import kotlinx.android.synthetic.main.activity_main.*
@@ -39,14 +41,11 @@ class MainActivity : AppCompatActivity() {
         MarvelData.buildMarvelServiceAPI()
         comicsInternal.addAll(convertRoomComicToGeneral())
 
-        adapter = ComicsAdapter(
-            comicsInternal,
-            object : ClickListener {
+        adapter =
+            ComicsAdapter(comicsInternal, object : ClickListener {
                 override fun onClick(view: View, position: Int) {
                     val detailedComic = comicsInternal[position]
-                    val intent = Intent(
-                        this@MainActivity,
-                        ComicDetail::class.java
+                    val intent = Intent(this@MainActivity, ComicDetail::class.java
                     ).apply {
                         putExtra("comic", detailedComic)
                     }
@@ -97,24 +96,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun convertRoomComicToGeneral(): ArrayList<GeneralComic> {
         val generalComics = arrayListOf<GeneralComic>()
-        MarvelData.comicsRoom?.forEach {
-            generalComics.add(
-                GeneralComic(
-                    it
-                )
-            )
-        }
+        MarvelData.comicsRoom?.forEach { generalComics.add(GeneralComic(it)) }
         return generalComics
     }
 
     private fun convertComicAPIToGeneral(): ArrayList<GeneralComic> {
         val generalComics = arrayListOf<GeneralComic>()
         MarvelData.comicsAPI.forEach {
-            generalComics.add(
-                GeneralComic(
-                    it
-                )
-            )
+            generalComics.add(GeneralComic(it))
         }
         return generalComics
     }

@@ -1,8 +1,8 @@
-package es.usj.mastertsa.pluengo.marvelcollection.core.dao.room.model.utils
+package es.usj.mastertsa.pluengo.marvelcollection.model.utils
 
 import androidx.room.TypeConverter
-import es.usj.mastertsa.pluengo.marvelcollection.MainActivity
-import es.usj.mastertsa.pluengo.marvelcollection.core.dao.room.model.ComicRoom
+import es.usj.mastertsa.pluengo.marvelcollection.controller.comicList.MainActivity
+import es.usj.mastertsa.pluengo.marvelcollection.model.ComicRoom
 import es.usj.mastertsa.pluengo.marvelcollection.core.dao.room.utils.MarvelRoomDatabase
 import java.util.*
 
@@ -19,13 +19,13 @@ class Converters {
     }
 
     @TypeConverter
-    fun comicFromId(value: Long?): ComicRoom? {
+    fun comicFromId(value: Int?): ComicRoom? {
         return MarvelRoomDatabase.getDatabase(
             MainActivity.ctx!!)!!.comicDao()!!.findById(value!!)
     }
 
     @TypeConverter
-    fun comicToId(comic: ComicRoom?): Long? {
-        return comic?.id
+    fun comicToId(comic: ComicRoom?): Int? {
+        return comic?.digitalId
     }
 }

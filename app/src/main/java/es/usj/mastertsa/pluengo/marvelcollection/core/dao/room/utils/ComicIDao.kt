@@ -1,7 +1,7 @@
 package es.usj.mastertsa.pluengo.marvelcollection.core.dao.room.utils
 
 import androidx.room.*
-import es.usj.mastertsa.pluengo.marvelcollection.core.dao.room.model.ComicRoom
+import es.usj.mastertsa.pluengo.marvelcollection.model.ComicRoom
 
 @Dao
 interface ComicIDao {
@@ -15,10 +15,10 @@ interface ComicIDao {
     @Delete
     fun delete(comic: ComicRoom?)
 
-    @Query("SELECT * from comics WHERE id = :id")
-    fun findById(id: Long): ComicRoom
+    @Query("SELECT * from comics WHERE digitalId = :id")
+    fun findById(id: Int): ComicRoom
 
-    @Query("SELECT * from comics ORDER BY id ASC")
+    @Query("SELECT * from comics ORDER BY digitalId ASC")
     fun getAllComics(): List<ComicRoom>
 
     @Update

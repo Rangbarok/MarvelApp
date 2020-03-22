@@ -1,8 +1,9 @@
-package es.usj.mastertsa.pluengo.marvelcollection
+package es.usj.mastertsa.pluengo.marvelcollection.controller.comicDetail
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import es.usj.mastertsa.pluengo.marvelcollection.R
+import es.usj.mastertsa.pluengo.marvelcollection.model.GeneralComic
 import es.usj.mastertsa.pluengo.marvelcollection.singleton.MarvelData
 import kotlinx.android.synthetic.main.activity_comic_detail.*
 import org.jetbrains.anko.doAsync

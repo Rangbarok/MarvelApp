@@ -24,7 +24,7 @@ After the client library is installed/deployed, you can use it in your Maven pro
 
 ```xml
 <dependency>
-    <groupId>es.usj.mastertsa.jhernandez.musicquiz</groupId>
+    <groupId>es.usj.mastertsa.pluengo.marvelcollection</groupId>
     <artifactId>client</artifactId>
     <version>1.0</version>
     <scope>compile</scope>

@@ -1,6 +1,6 @@
 lazy val root = (project in file(".")).
   settings(
-    organization := "es.usj.mastertsa.jhernandez.musicquiz",
+    organization := "es.usj.mastertsa.pluengo.marvelcollection",
     name := "client",
     version := "1.0",
     scalaVersion := "2.11.4",

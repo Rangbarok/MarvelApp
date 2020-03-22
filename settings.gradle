@@ -1,2 +1,2 @@
 include ':app', ':api'
-rootProject.name='MusicQuiz'
+rootProject.name='MarvelCollection'

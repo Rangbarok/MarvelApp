@@ -2,8 +2,8 @@ package es.usj.mastertsa.pluengo.marvelcollection.core.dao.room.utils
 
 import android.content.Context
 import androidx.room.*
-import es.usj.mastertsa.pluengo.marvelcollection.core.dao.room.model.ComicRoom
-import es.usj.mastertsa.pluengo.marvelcollection.core.dao.room.model.utils.Converters
+import es.usj.mastertsa.pluengo.marvelcollection.model.ComicRoom
+import es.usj.mastertsa.pluengo.marvelcollection.model.utils.Converters
 
 @Database(
     entities = [ComicRoom::class],

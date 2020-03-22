@@ -1,7 +1,7 @@
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 
-group = 'es.usj.mastertsa.jhernandez.musicquiz'
+group = 'es.usj.mastertsa.pluengo.marvelcollection'
 version = '1.0'
 
 buildscript {

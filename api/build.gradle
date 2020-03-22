@@ -7,7 +7,7 @@ dependencies {
 sourceCompatibility = "8"
 targetCompatibility = "8"
 
-group 'es.usj.mastertsa.jhernandez.musicquiz'
+group 'es.usj.mastertsa.pluengo.marvelcollection'
 version '1.0.0'
 
 buildscript {
@@ -27,7 +27,7 @@ buildscript {
 apply plugin: 'org.openapi.generator'
 
 ext {
-    package_name = "es.usj.mastertsa.jhernandez.musicquiz.client"
+    package_name = "es.usj.mastertsa.pluengo.marvelcollection.client"
     swagger_annotations_version = "1.5.21"
     jackson_version = "2.9.8"
     jackson_databind_version = "2.9.8"

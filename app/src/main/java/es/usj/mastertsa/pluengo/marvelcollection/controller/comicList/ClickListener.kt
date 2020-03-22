@@ -1,4 +1,4 @@
-package es.usj.mastertsa.pluengo.marvelcollection
+package es.usj.mastertsa.pluengo.marvelcollection.controller.comicList
 
 import android.view.View
 

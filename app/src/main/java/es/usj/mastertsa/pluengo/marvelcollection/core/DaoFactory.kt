@@ -1,6 +1,6 @@
 package es.usj.mastertsa.pluengo.marvelcollection.core
 
-import es.usj.mastertsa.pluengo.marvelcollection.core.dao.room.model.ComicRoom
+import es.usj.mastertsa.pluengo.marvelcollection.model.ComicRoom
 import es.usj.mastertsa.pluengo.marvelcollection.core.factories.RoomDaoFactory
 
 enum class DatasourceType {

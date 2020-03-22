@@ -1,4 +1,4 @@
-package es.usj.mastertsa.pluengo.marvelcollection
+package es.usj.mastertsa.pluengo.marvelcollection.controller.comicList
 
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import es.usj.mastertsa.pluengo.marvelcollection.R
+import es.usj.mastertsa.pluengo.marvelcollection.model.GeneralComic
 import kotlinx.android.synthetic.main.template.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
